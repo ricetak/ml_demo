@@ -251,7 +251,6 @@ plt.legend()
 plt.savefig("loss.png")
 plt.close()
 
-
 outfile.close()
 
 print()
