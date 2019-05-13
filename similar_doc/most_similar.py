@@ -37,7 +37,7 @@ def most_similar(target_id, file_name):
     #sys.stderr.write("\n### most_similar END\n")
 
 #------------------------------------------------------------
-# 対象モデルファイル
+# model
 #------------------------------------------------------------
 model_name = "all_text_data"
 
