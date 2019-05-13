@@ -96,8 +96,6 @@ print("Create Model -> END\n")
 
 sys.exit()
 
-
-
 '''
 Doc2Vec(
     documents=None, 
