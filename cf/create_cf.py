@@ -120,7 +120,8 @@ for _ in range(100):
 #-----------------------------------------------------
 nm_csv_file = base_dir + "/data/nmf_score_" + str(user_min) + "_"  + str(k)  +".csv"
 
-df = pd.DataFrame(W @ H, index=score_index, columns=score_columns)
+#df = pd.DataFrame(W @ H, index=score_index, columns=score_columns)
+df = pd.DataFrame(np.dot(W, H), index=score_index, columns=score_columns)
 print(df)
 
 df.to_csv(nm_csv_file)
