@@ -78,16 +78,16 @@ for i, document in enumerate(documents):
 print("\narticle num : " , len(documents), "\n")
 
 #------------------------------------------------------------
-# モデルの作成とファイル保存
+# create model and to save file
 #------------------------------------------------------------
-# モデル作成 (dm=0: PV-DBOW)
+# create model (dm=0: PV-DBOW)
 #model = Doc2Vec(documents=training_docs, min_count=1, dm=0, epochs=50)
 
-# モデル作成 (dm=1: PV-DM dmpv)
+# create model (dm=1: PV-DM dmpv)
 model = Doc2Vec(documents=training_docs, dm=1, min_count=param_min_count, epochs=param_epochs)
 #model = Doc2Vec(documents=training_docs, dm=1)
 
-# モデルのセーブ
+# save file
 model.save(model_name)
 
 print(model_name, " を作成しました。")
