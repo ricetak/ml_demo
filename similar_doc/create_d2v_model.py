@@ -97,6 +97,7 @@ print("Create Model -> END\n")
 sys.exit()
 
 
+
 '''
 Doc2Vec(
     documents=None, 
@@ -135,3 +136,5 @@ BaseWordEmbeddingsModel(
     fast_version=0, 
     **kwargs)
 ''' 
+
+
