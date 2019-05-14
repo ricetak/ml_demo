@@ -4,17 +4,17 @@ import os
 import MeCab
 
 #------------------------------------------------------------
-# テキストデータを MeCabで分かち書きする
+# wakati text data with MeCab
 #------------------------------------------------------------
-# 対象データファイル
+# data file
 file_name = "all_text_data"
 
 print("\nMeCab -> START")
 
-# 分かち書きファイル名を生成
+# Create file name
 wakati_name = "./text_file/wakati_" + file_name + ".txt"
 
-# 分かち書き
+# wakati
 tagger = MeCab.Tagger("-Owakati")
 
 #tagger.parse("")
@@ -30,7 +30,8 @@ f.write(all_words)
 f.close()
 
 print()
-print(wakati_name, " を作成しました。")
+print("save to " +  wakati_name)
+
 print()
 print("MeCab -> END\n")
 

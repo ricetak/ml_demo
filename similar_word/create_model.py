@@ -1,10 +1,10 @@
 # coding: utf-8
 from gensim.models import word2vec
 
-# 対象データファイル
+# data files
 file_name = "kokoro"
 
-# 各ファイル名を生成
+# Create file name
 wakati_name = "./text_file/wakati_" + file_name + ".txt"
 model_name = "./model/" + file_name + ".model"
 
@@ -13,7 +13,7 @@ print("### create Model START : " + file_name)
 print(wakati_name)
 
 #################################################################
-# Word2Vec のモデル作成
+# Create Word2Vec Model
 #################################################################
 print("Word2Vec create Model -> START")
 
@@ -29,7 +29,10 @@ print("Word2Vec create Model -> END")
 #################################################################
 
 print("")
-print(model_name + " を作成しました")
+#print(model_name + " を作成しました")
+print("save to " + model_name)
+
+
 print("")
 
 print("### create Model END")
