@@ -21,7 +21,7 @@ print()
 print("### START ###")
 
 #---------------------------------------------------------
-# テキストのダウンロード・読み込み
+# Load text from file
 #---------------------------------------------------------
 target_text = "roll"
 
@@ -40,7 +40,7 @@ print('corpus length:', len(text))
 print('corpus length:', len(text), file=outfile)
 
 #---------------------------------------------------------
-# 各々の字のdict作成
+# Create a dictionary of each char
 #---------------------------------------------------------
 # chars : 重複を排除した「字」のリスト
 chars = sorted(list(set(text)))
@@ -54,7 +54,7 @@ char_indices = dict((c, i) for i, c in enumerate(chars))
 indices_char = dict((i, c) for i, c in enumerate(chars))
 
 #---------------------------------------------------------
-# 学習用データに整形
+# Reshape the data
 #---------------------------------------------------------
 # cut the text in semi-redundant sequences of maxlen characters
 # maxlen : いくつの「字」を1つの「文」とするか
@@ -113,7 +113,7 @@ for i, sentence in enumerate(sentences):
 #sys.exit()
 
 #---------------------------------------------------------
-# モデル作成
+# Create model
 #---------------------------------------------------------
 # build the model: a single LSTM
 print('Build model...')

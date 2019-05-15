@@ -12,14 +12,14 @@ print("text_path : ", text_path)
 print("data_path : ", data_path)
 
 data_file = open(data_path,'w',encoding='utf-8')
-
-bindata = open(text_path, "rb")
-lines = bindata.readlines()
+ 
+text_data = open(text_path, "rb")
+lines = text_data.readlines()
 
 print("\n########## START ##########")
 for line in lines:
-    text = line.decode('utf-8')        
-    text = re.split(r'\r',text)[0]         
+    text = line.decode('utf-8')
+    text = re.split(r'\r',text)[0]
     text = text.replace('　', ' ')
     text = text.replace('●', '')
     
