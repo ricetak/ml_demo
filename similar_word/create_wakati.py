@@ -1,35 +1,38 @@
 # coding: utf-8
+import sys
+import os
 import MeCab
 
+#------------------------------------------------------------
+# wakati text data with MeCab
+#------------------------------------------------------------
 # data file
 file_name = "kokoro"
 
-print("### create wakati file : " + file_name)
-
-#################################################################
-# wakati text data with MeCab
-#################################################################
-print("MeCab -> START")
+print("\nMeCab -> START")
 
 # Create file name
 wakati_name = "./text_file/wakati_" + file_name + ".txt"
 
-# Get text data
-target_file = open("./text_file/" + file_name + ".txt", "r", encoding="utf-8")
-target_text = target_file.read()
-target_file.close()
-
 # wakati
 tagger = MeCab.Tagger("-Owakati")
 
+#tagger.parse("")
+all_words = "";
+for line in open("./text_file/" + file_name + ".txt", "r", encoding="utf-8"):
+    words = tagger.parse(line)
+    all_words = all_words + words
+
+#print(all_words)
+
 f = open(wakati_name,'w', encoding='utf-8')
-
-tagger.parse("")
-
-f.write(tagger.parse(target_text))
+f.write(all_words)
 f.close()
 
 print()
-print(wakati_name)
+print("save to " +  wakati_name)
+
 print()
-print("MeCab -> END")
+print("MeCab -> END\n")
+
+sys.exit()
