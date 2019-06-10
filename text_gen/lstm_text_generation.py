@@ -97,13 +97,10 @@ for i, sentence in enumerate(sentences):
     print(i, " : " , sentence)
     
     for t, char in enumerate(sentence):
-                #print(t, " : " , char_indices[char])
-        
+        #print(t, " : " , char_indices[char])
         x[i, t, char_indices[char]] = 1
-                
         print(t, ":" , char, "x[" ,i, t, char_indices[char], "] = 1");
 
-        
     y[i, char_indices[next_chars[i]]] = 1
     #print(i, " : " , next_chars[i])
     #print("y[" , i, char_indices[next_chars[i]], "] = 1");
@@ -122,54 +119,35 @@ model.add(LSTM(128, input_shape=(maxlen, len(chars))))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
 
-# 勾配法にRMSpropを用いる
 optimizer = RMSprop(lr=0.01)
 
 model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
 #---------------------------------------------------------
-# 各「字」の出現確率の配列から、出力する文字を出現率に従いランダムに選ぶ
-#
-#  preds       : モデルからの出力結果、float32型の多項分布が入ったndarray
-#  temperature : 多様度、この値が高いほど preds 中の出現率が低いものが選ばれやすくなる
+# 字の出現確率の配列から出力する文字をランダムに選ぶ
+#  preds       : モデルからの出力結果
+#  temperature : 多様度
 #---------------------------------------------------------
-def sample(preds, temperature=1.0):
-    # helper function to sample an index from a probability array
+def get_next_char_index(preds, temperature=1.0):
     preds = np.asarray(preds).astype('float64')
     
-    # 確率の低く出た「字」が抽選で選ばれやすくなるようにゲタをはかせるため、
-    # 自然対数を取った上、引数の値で割る
     preds = np.log(preds) / temperature
-    
-    # 上記で確率の自然対数を取ったため、その逆変換である自然指数関数をとる
-    exp_preds = np.exp(preds)
-    
-    # 多項分布の形に合わせるため、総和が1となるように全値を総和で割る
+    exp_preds = np.exp(preds)    
     preds = exp_preds / np.sum(exp_preds)
-    
-    # 多項分布に基づいた抽選を行う
     probas = np.random.multinomial(1, preds, 1)
     
     return np.argmax(probas)
 
 
 #---------------------------------------------------------
-# 各エポックの終了時にその時点のモデルを使ったテキスト生成処理
+# 各エポック終了時にその時のモデルを使ったテキスト生成処理
 #---------------------------------------------------------
-def on_epoch_end(epoch, logs):
-    # Function invoked at end of each epoch. Prints generated text.
-    #print()
-    #print('----- Generating text after Epoch: %d' % epoch)
-    
+def on_epoch_end(epoch, logs):   
     print('*************************************************************', file=outfile)
     print('* Generating text after Epoch: %d' % epoch, file=outfile)
     print('*************************************************************', file=outfile)
 
-    # モデルはmaxlen文字の「文」からその次の「字」を予測するものであるため、
-    # その元となるmaxlen文字の「文」を入力テキストからランダムに選ぶ
-    start_index = random.randint(0, len(text) - maxlen - 1)
-    
-    # XXX 毎回、文頭から文章生成
+    # 文頭から文章生成
     start_index = 0  
     
     #for diversity in [0.2, 0.5, 1.0, 1.2]:
@@ -203,7 +181,7 @@ def on_epoch_end(epoch, logs):
 
             # 現在の「文」に続く「字」を予測する
             preds = model.predict(x_pred, verbose=0)[0]
-            next_index = sample(preds, diversity)
+            next_index = get_next_char_index(preds, diversity)
             next_char = indices_char[next_index]
 
             # 予測して得られた「字」を生成し、「文」に追加
@@ -212,14 +190,9 @@ def on_epoch_end(epoch, logs):
             # モデル入力する「文」から最初の文字を削り、予測結果の「字」を追加
             # 例：sentence 「これはメイドインジャパン」
             #     next_char 「の」
-            #     ↓
-            #     sentence 「れはメイドインジャパンの」
+            #     -> sentence 「れはメイドインジャパンの」
             sentence = sentence[1:] + next_char
-
-            #sys.stdout.write(next_char)
-            #sys.stdout.flush()
-            
-           
+                        
         generated_for_file += "\n" + generated + "\n\n"
         outfile.write(generated_for_file)
          
