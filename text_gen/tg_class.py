@@ -199,26 +199,14 @@ class TG:
         print("\n\n### END ### \n\n")
 
     #---------------------------------------------------------
-    # 各「字」の出現確率の配列から、出力する文字を出現率に従いランダムに選ぶ
-    #
-    #  preds       : モデルからの出力結果、float32型の多項分布が入ったndarray
-    #  temperature : 多様度、この値が高いほど preds 中の出現率が低いものが選ばれやすくなる
+    # 出力する文字をランダムに選ぶ
     #---------------------------------------------------------
-    def sample(self, preds, temperature=1.0):
-        # helper function to sample an index from a probability array
+    def get_next_char_index(self, preds, temperature=1.0):
         preds = np.asarray(preds).astype('float64')
         
-        # 確率の低く出た「字」が抽選で選ばれやすくなるようにゲタをはかせるため、
-        # 自然対数を取った上、引数の値で割る
         preds = np.log(preds) / temperature
-        
-        # 上記で確率の自然対数を取ったため、その逆変換である自然指数関数をとる
         exp_preds = np.exp(preds)
-        
-        # 多項分布の形に合わせるため、総和が1となるように全値を総和で割る
         preds = exp_preds / np.sum(exp_preds)
-        
-        # 多項分布に基づいた抽選を行う
         probas = np.random.multinomial(1, preds, 1)
         
         return np.argmax(probas)
@@ -228,9 +216,6 @@ class TG:
     # 各エポックの終了時にその時点のモデルを使ったテキスト生成処理
     #*******************************************************************
     def on_epoch_end(self, epoch, logs):
-        # Function invoked at end of each epoch. Prints generated text.
-        #print()
-        #print('----- Generating text after Epoch: %d' % epoch)
         
         outfile = self.outfile
         text = self.text
@@ -239,14 +224,7 @@ class TG:
         print('*************************************************************', file=outfile)
         print('* Generating text after Epoch: %d' % epoch, file=outfile)
         print('*************************************************************', file=outfile)
-    
-        # モデルはmaxlen文字の「文」からその次の「字」を予測するものであるため、
-        # その元となるmaxlen文字の「文」を入力テキストからランダムに選ぶ
-        #start_index = random.randint(0, len(text) - maxlen - 1)
-        
-        # XXX 毎回、文頭から文章生成
-        #start_index = 0  
-        
+            
         if self.start_index_flag == 0:
             start_index = 0
         else:
@@ -280,33 +258,23 @@ class TG:
             
             # 「文」に続くcreate_len個の「字」をモデルから予測し出力する
             for i in range(create_len):
-                
-                # 現在の「文」の中のどの位置に何の「字」があるかのテーブルを
-                # フィッティング時に入力したxベクトルと同じフォーマットで生成
-                # 最初の次元は「文」のIDなので0固定
                 x_pred = np.zeros((1, maxlen, len(chars)))
                 for t, char in enumerate(sentence):
+                     # 最初の次元は「文」のIDなので0固定
                     x_pred[0, t, char_indices[char]] = 1. # 数値がピリオド"."で終了する場合浮動小数点
     
                 # 現在の「文」に続く「字」を予測する
                 preds = model.predict(x_pred, verbose=0)[0]
-                next_index = self.sample(preds, diversity)
+                next_index = self.get_next_char_index(preds, diversity)
                 next_char = self.indices_char[next_index]
     
                 # 予測して得られた「字」を生成し、「文」に追加
                 generated += next_char
                 
-                # モデル入力する「文」から最初の文字を削り、予測結果の「字」を追加
                 # 例：sentence 「これはメイドインジャパン」
-                #     next_char 「の」
-                #     ↓
-                #     sentence 「れはメイドインジャパンの」
+                #     next_char 「の」-> sentence 「れはメイドインジャパンの」
                 sentence = sentence[1:] + next_char
-    
-                #sys.stdout.write(next_char)
-                #sys.stdout.flush()
-                
-               
+
             generated_for_file += "\n" + generated + "\n\n"
             outfile.write(generated_for_file)
              

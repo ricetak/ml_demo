@@ -124,9 +124,7 @@ optimizer = RMSprop(lr=0.01)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
 #---------------------------------------------------------
-# 字の出現確率の配列から出力する文字をランダムに選ぶ
-#  preds       : モデルからの出力結果
-#  temperature : 多様度
+# 出力する文字をランダムに選ぶ
 #---------------------------------------------------------
 def get_next_char_index(preds, temperature=1.0):
     preds = np.asarray(preds).astype('float64')
@@ -172,11 +170,9 @@ def on_epoch_end(epoch, logs):
         # 「文」に続くcreate_len個の「字」をモデルから予測し出力する
         for i in range(create_len):
             
-            # 現在の「文」の中のどの位置に何の「字」があるかのテーブルを
-            # フィッティング時に入力したxベクトルと同じフォーマットで生成
-            # 最初の次元は「文」のIDなので0固定
             x_pred = np.zeros((1, maxlen, len(chars)))
             for t, char in enumerate(sentence):
+                 # 最初の次元は「文」のIDなので0固定
                 x_pred[0, t, char_indices[char]] = 1. # 数値がピリオド"."で終了する場合浮動小数点
 
             # 現在の「文」に続く「字」を予測する
@@ -187,10 +183,8 @@ def on_epoch_end(epoch, logs):
             # 予測して得られた「字」を生成し、「文」に追加
             generated += next_char
             
-            # モデル入力する「文」から最初の文字を削り、予測結果の「字」を追加
             # 例：sentence 「これはメイドインジャパン」
-            #     next_char 「の」
-            #     -> sentence 「れはメイドインジャパンの」
+            #     next_char 「の」-> sentence 「れはメイドインジャパンの」
             sentence = sentence[1:] + next_char
                         
         generated_for_file += "\n" + generated + "\n\n"
@@ -199,7 +193,7 @@ def on_epoch_end(epoch, logs):
         #print()
 
 #---------------------------------------------------------
-# 各epoch終了時のcallbackとして、上記のon_epoch_endを呼ぶ
+# 各epoch終了時にon_epoch_endを呼ぶ
 #---------------------------------------------------------
 print_callback = LambdaCallback(on_epoch_end=on_epoch_end)
 
