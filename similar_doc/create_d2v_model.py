@@ -60,7 +60,6 @@ print("\narticle num : " , len(documents), "\n")
 
 # create model (dm=1: PV-DM dmpv)
 model = Doc2Vec(documents=training_docs, dm=1, min_count=param_min_count, epochs=param_epochs)
-#model = Doc2Vec(documents=training_docs, dm=1)
 
 # save file
 model.save(model_name)
