@@ -29,4 +29,3 @@ target_id = '3'
 most_similar(target_id, model_name)
 
 sys.exit()
-
